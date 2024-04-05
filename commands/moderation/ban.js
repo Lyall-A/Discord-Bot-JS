@@ -1,10 +1,10 @@
 // TODO: everything
 module.exports = class extends Command {
     constructor() {
-        super("ping", "Test response times");
+        super("ban", "Ban a user");
     }
 
     async run() {
-        console.log("/ping")
+        console.log("/ban")
     }
 }

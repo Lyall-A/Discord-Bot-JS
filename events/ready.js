@@ -5,6 +5,6 @@ module.exports = class extends Event {
     }
 
     async run() {
-        console.log("piss")
+        console.log("ready!!!!")
     }
 }
