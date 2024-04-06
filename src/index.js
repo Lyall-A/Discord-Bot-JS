@@ -29,5 +29,5 @@ const { logger } = utils;
         })(0);
     }
 
-
+    const client = new utils.discord.Client();
 })();

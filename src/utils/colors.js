@@ -8,6 +8,7 @@ module.exports = {
     reverse: "\x1b[7m",
     hidden: "\x1b[8m",
 
+    // Foreground
     fgBlack: "\x1b[30m",
     fgRed: "\x1b[31m",
     fgGreen: "\x1b[32m",
@@ -18,6 +19,7 @@ module.exports = {
     fgWhite: "\x1b[37m",
     fgGray: "\x1b[90m",
 
+    // Background
     bgBlack: "\x1b[40m",
     bgRed: "\x1b[41m",
     bgGreen: "\x1b[42m",
@@ -26,5 +28,11 @@ module.exports = {
     bgMagenta: "\x1b[45m",
     bgCyan: "\x1b[46m",
     bgWhite: "\x1b[47m",
-    bgGray: "\x1b[100m"
+    bgGray: "\x1b[100m",
+
+    string(string, fg, bg) {
+        const fgColor = this[`fg${fg?.charAt(0)?.toUpperCase()}${fg?.substring(1)?.toLowerCase()}`] || "";
+        const bgColor = this[`bg${bg?.charAt(0)?.toUpperCase()}${bg?.substring(1)?.toLowerCase()}`] || "";
+        return `${fgColor}${bgColor}${string}${this.reset}`;
+    }
 }

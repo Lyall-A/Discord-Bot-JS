@@ -3,6 +3,12 @@ const colors = require("./src/utils/colors");
 const config = {
     debug: true,
     secretPath: ".secret",
+    discord: {
+        gatewayUrl: "wss://gateway.discord.gg",
+        gatewayVersion: 10,
+        apiUrl: "https://discord.com/api",
+        apiVersion: 10
+    },
     logger: {
         info: {
             prefix: `${colors.fgCyan}[INFO]${colors.reset} `
