@@ -1,15 +1,20 @@
 // TODO: finish
 const objectDefaults = require("./objectDefaults");
 
-function logger(msg, options) {
+function create(options) {
     options = objectDefaults(options, {
         stream: process.stdout,
         prefix: "",
         suffix: "",
-        carriageReturn: false,
-        newLine: true
+        newLine: true,
     });
-    options.stream.write(`${options.prefix}${msg}${options.suffix}${options.carriageReturn ? "\r" : ""}${options.newLine ? "\n" : ""}`); // {prefix?}{message}{suffix?}{carriage return?}{new line?}
+    return function(msg) {
+        return options.stream.write(`${options.prefix}${msg}${options.suffix}${options.newLine ? "\n" : ""}`); // {prefix?}{message}{suffix?}{new line?}
+    }
 }
+
+const logger = create();
+
+Object.entries(config.logger).forEach(([name, options]) => logger[name] = create(options));
 
 module.exports = logger;

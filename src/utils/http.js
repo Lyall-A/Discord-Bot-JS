@@ -6,9 +6,7 @@ const objectDefaults = require("./objectDefaults");
 const parseUrl = require("./parseUrl");
 
 module.exports = (url, options) => {
-    options = objectDefaults(options, {
-        httpOptions: { }
-    });
+    options = objectDefaults(options);
 
     return new Promise((resolve, reject) => {
         const parsedUrl = objectDefaults(parseUrl(url), {
