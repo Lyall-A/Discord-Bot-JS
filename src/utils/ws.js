@@ -13,7 +13,11 @@ module.exports = {
         }
 
         send(message) {
-            this.conn.send(message);
+            this.conn.send((this.options.json && typeof message == "object") ? JSON.stringify(message) : message);
+        }
+
+        close(code) {
+            this.conn.close(code);
         }
     },
     server: class {

@@ -23,11 +23,21 @@ const { logger } = utils;
             if (!testsDir[index]) return;
             const filename = testsDir[index];
             const name = path.basename(filename, path.extname(filename));
-            logger.debug(`Running test: ${name}`)
+            logger.debug(`Running test: ${name}`);
             await require(`./tests/${filename}`);
             return test(index+1);
         })(0);
     }
 
-    const client = new utils.discord.Client();
+    // Connect to Discord
+    const client = new utils.discord.Client(secret.discord.token, config.discord.intents);
+    client.on("ready",
+        data =>
+            console.log("Logged in:", data.user.username));
+
+    // TODO: make good
+    process.on("SIGINT", async () => {
+        client.close();
+        process.exit();
+    });
 })();

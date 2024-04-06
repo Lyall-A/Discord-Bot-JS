@@ -1,4 +1,6 @@
 // TODO: finish (like client class and stuff)
+// TODO: change all fnName() { } to fnName = () => { }
+// TODO: event deletion on gateway close
 
 const intents = {
     GUILDS: 1 << 0,
@@ -22,39 +24,88 @@ const intents = {
     AUTO_MODERATION_EXECUTION: 1 << 21
 };
 
+function parseIntents(array) {
+    return array.map(i => intents[i.toUpperCase()]).filter(i=>i).reduce((prev, curr) => prev + curr);
+}
+
+function parseIntentsInt(int) {
+    const parsed = [ ];
+    Object.entries(intents).reverse().forEach((name, value) => {
+        if (int <= value) {
+            int - value;
+            parsed.push(name);
+        };
+    });
+    return parsed;
+}
+
 class Client {
-    constructor(token, intents) {
-        this.token = token;
-        this.gateway = new Gateway();
-        this.gateway.opOn(10, data => {
-            console.log("Hello,", data);
+    constructor(token, intents, identity) {
+        this.listeners = [ ];
+        identity = utils.objectDefaults(identity, {
+            properties: utils.objectDefaults(config.discord.properties, { }),
+            presence: utils.objectDefaults(config.discord.presence, { })
+        });
+        const intentsInt = (typeof intents == "object" ? parseIntents(intents) : intents) || 0;
+
+        // https://discord.com/developers/docs/topics/gateway#connection-lifecycle
+        this.gateway = new Gateway(); // Stage 1
+        this.gateway.onOp(10, data => {
+            // Hello event (stage 2)
+            this.heartbeatInterval = setInterval(() => this.gateway.send(1, null), data.heartbeat_interval); // Heartbeat interval (stage 3)
+            // Send identity (stage 4)
+            this.gateway.send(2, {
+                token,
+                intents: intentsInt,
+                ...identity
+            });
+        });
+        this.gateway.onOp(0, (data, message) => {
+            utils.eventListener.call(message.t.toUpperCase(), this.listeners, [data, message]);
+        });
+        this.gateway.onEvent("READY", data => {
+            this.bot = data;
+            this.user = data.user;
+            this.gatewayVersion = data.v;
+            this.sessionType = data.session_type;
+            this.sessionId = data.session_id;
+            this.resumeGatewayUrl = data.resume_gateway_url;
+            this.application = data.application;
+            this.rtcRegions = data.geo_ordered_rtc_regions;
         });
     }
+
+    on = (event, callback) => { utils.eventListener.create(event.toUpperCase(), callback, this.listeners) };
+    close = () => { this.gateway.close() };
 };
 
 class Gateway {
     constructor() {
+        this.listeners = { };
         this.opListeners = { };
         this.eventListeners = { };
 
-        // https://discord.com/developers/docs/topics/gateway#connection-lifecycle
-        this.gateway = new utils.ws.connection(`${config.discord.gatewayUrl}?v=${config.discord.gatewayVersion}`, { json: true });
+        this.gateway = new utils.ws.connection(`${config.discord.gatewayUrl}?v=${config.discord.gatewayVersion}&encoding=json`, { json: true });
         this.gateway.on("message", message => {
             // TODO: remove JSON parse after removing ws dep
             const json = JSON.parse(message);
 
-            if (json.op) utils.eventListener.call(json.op, this.opListeners, [json.d, json]);
-            if (json.t) utils.eventListener.call(json.t, this.eventListeners, [json.d, json]);
+            if (typeof json.op == "number") utils.eventListener.call(json.op, this.opListeners, [json.d, json]);
+            if (json.t && !json.op) utils.eventListener.call(json.t, this.eventListeners, [json.d, json]);
         });
     }
 
-    opOn(op, callback) { utils.eventListener.create(op, callback, this.opListeners) }
-    eventOn(op, callback) { utils.eventListener.create(op, callback, this.eventListeners) }
-    // TODO: remove JSON stringify after removing ws dep
-    send(op, data) { this.gateway.send(JSON.stringify({ s: null, op, d: data })) };
+    // on(event, callback) { utils.eventListener.create(event, callback, this.listeners) };
+    on(event, callback) { this.gateway.on(event, callback) };
+    onOp(op, callback) { utils.eventListener.create(op, callback, this.opListeners) };
+    onEvent(event, callback) { utils.eventListener.create(event.toUpperCase(), callback, this.eventListeners) };
+    send(op, data) { this.gateway.send({ s: null, op, d: data }) };
+    close = () => { this.gateway.close(1000) };
 };
 module.exports = {
     intents,
+    parseIntents,
+    parseIntentsInt,
     Client,
     Gateway
 }
