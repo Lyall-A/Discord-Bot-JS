@@ -20,8 +20,14 @@ module.exports = (url, options) => {
             host: parsedUrl.host,
             port: parsedUrl.port,
             path: parsedUrl.path,
+            headers: options.headers,
             ...options.httpOptions
         };
+
+        if (options.json) {
+            options.body = JSON.stringify(options.json);
+            httpOptions.headers = utils.objectDefaults(httpOptions.headers, { "Content-Type": "application/json" });
+        }
 
         const req = (parsedUrl.protocol == "https" ? https : http).request(httpOptions, res => {
             function buffer() {
@@ -43,11 +49,13 @@ module.exports = (url, options) => {
                 buffer,
                 text,
                 json,
-                ...res
+                status: res.statusCode,
+                statusMessage: res.statusMessage,
+                raw: res
             });
         });
 
-        req.end(options.json ? JSON.stringify(options.body) : options.body);
+        req.end(options.body);
 
         req.on("error", err => reject(err));
     });

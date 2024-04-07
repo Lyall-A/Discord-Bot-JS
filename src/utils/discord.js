@@ -39,6 +39,10 @@ function parseIntentsInt(int) {
     return parsed;
 }
 
+function api(path, options) {
+    return utils.http(`${config.discord.apiUrl}/v${config.discord.apiVersion}${path}`, utils.objectDefaults(options, { headers: { "Authorization": `Bot ${secret.discord.token}` } }));
+}
+
 class Client {
     constructor(token, intents, identity) {
         this.listeners = [ ];
@@ -87,25 +91,22 @@ class Gateway {
 
         this.gateway = new utils.ws.connection(`${config.discord.gatewayUrl}?v=${config.discord.gatewayVersion}&encoding=json`, { json: true });
         this.gateway.on("message", message => {
-            // TODO: remove JSON parse after removing ws dep
-            const json = JSON.parse(message);
-
-            if (typeof json.op == "number") utils.eventListener.call(json.op, this.opListeners, [json.d, json]);
-            if (json.t && !json.op) utils.eventListener.call(json.t, this.eventListeners, [json.d, json]);
+            if (typeof message.op == "number") utils.eventListener.call(message.op, this.opListeners, [message.d, message]);
+            if (message.t && !message.op) utils.eventListener.call(message.t, this.eventListeners, [message.d, message]);
         });
     }
 
-    // on(event, callback) { utils.eventListener.create(event, callback, this.listeners) };
-    on(event, callback) { this.gateway.on(event, callback) };
-    onOp(op, callback) { utils.eventListener.create(op, callback, this.opListeners) };
-    onEvent(event, callback) { utils.eventListener.create(event.toUpperCase(), callback, this.eventListeners) };
-    send(op, data) { this.gateway.send({ s: null, op, d: data }) };
+    on = (event, callback) => { this.gateway.on(event, callback) };
+    onOp = (op, callback) => { utils.eventListener.create(op, callback, this.opListeners) };
+    onEvent = (event, callback) => { utils.eventListener.create(event.toUpperCase(), callback, this.eventListeners) };
+    send =(op, data) => { this.gateway.send({ s: null, op, d: data }) };
     close = () => { this.gateway.close(1000) };
 };
 module.exports = {
     intents,
     parseIntents,
     parseIntentsInt,
+    api,
     Client,
     Gateway
 }

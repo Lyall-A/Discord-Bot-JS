@@ -9,7 +9,13 @@ module.exports = {
         }
 
         on(event, callback) {
-            this.conn.on(event, callback);
+            if (event == "message") {
+                this.conn.on("message", message => {
+                    let json;
+                    try { json = JSON.parse(message) } catch(err) { };
+                    callback(json, message);
+                });
+            } else this.conn.on(event, callback);
         }
 
         send(message) {

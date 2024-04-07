@@ -1,4 +1,3 @@
-// TODO: finish
 const objectDefaults = require("./objectDefaults");
 
 function create(options) {

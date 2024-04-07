@@ -1,0 +1,4 @@
+utils.discord.api("/channels/1137748827227574374/messages", {
+    method: "POST",
+    json: { content: "test" }
+}).then(i => i.text()).then(i => utils.logger.debug(i)).catch(err => utils.logger.error(err));

@@ -13,7 +13,7 @@ fs.readdirSync("./src/utils")
     utils[name] = require(`./utils/${filename}`);
 });
 
-const { logger } = utils;
+const { logger, discord } = utils;
 
 (async () => {
     if (config.debug) {
@@ -29,8 +29,12 @@ const { logger } = utils;
         })(0);
     }
 
+    logger.info("Getting user");
+    if ((await discord.api("/users/@me")).status != 200) return logger.error("Failed to get user, make sure token is correct");
+    return;
+
     // Connect to Discord
-    const client = new utils.discord.Client(secret.discord.token, config.discord.intents);
+    const client = new discord.Client(secret.discord.token, config.discord.intents);
     client.on("ready",
         data =>
             console.log("Logged in:", data.user.username));
