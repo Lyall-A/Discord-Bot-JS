@@ -1,6 +1,8 @@
 const http = require("http");
 const https = require("https");
 
+const { utils } = globals;
+
 module.exports = (url, options) => {
     if (!url) throw new Error("No URL");
     options = utils.objectDefaults(options, {

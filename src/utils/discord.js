@@ -1,6 +1,6 @@
-// TODO: finish (like client class and stuff)
-// TODO: change all fnName() { } to fnName = () => { }
-// TODO: event deletion on gateway close
+// TODO: event deletion on gateway close and stuff like that
+
+const { utils } = globals;
 
 const intents = {
     GUILDS: 1 << 0,
@@ -65,7 +65,7 @@ class Client {
             });
         });
         this.gateway.onOp(0, (data, message) => {
-            utils.eventListener.call(message.t.toUpperCase(), this.listeners, [data, message]);
+            setTimeout(() => utils.eventListener.call(message.t.toUpperCase(), this.listeners, [data, message]));
         });
         this.gateway.onEvent("READY", data => {
             this.bot = data;

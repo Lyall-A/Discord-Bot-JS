@@ -4,16 +4,21 @@ const path = require("path");
 
 config = require("../config"); // Config
 secret = JSON.parse(fs.readFileSync(config.secretPath, "utf-8")); // Secret
-// Load all utils
-utils = { };
-fs.readdirSync("./src/utils")
-.filter(i => path.extname(i) == ".js")
-.forEach(filename => {
-    const name = path.basename(filename, path.extname(filename));
-    utils[name] = require(`./utils/${filename}`);
-});
 
-const { logger, discord } = utils;
+// Globals
+globals = {
+    utils: { },
+    client: { }
+};
+
+const { utils } = globals;
+
+// Load all utils
+require("./utils/getFiles")("./src/utils", i => path.extname(i) == ".js")
+    .forEach(filePath => {
+        const name = path.basename(filePath, path.extname(filePath));
+        globals.utils[name] = require(path.resolve(filePath));
+    });
 
 (async () => {
     if (config.debug) {
@@ -23,25 +28,26 @@ const { logger, discord } = utils;
             if (!testsDir[index]) return;
             const filename = testsDir[index];
             const name = path.basename(filename, path.extname(filename));
-            logger.debug(`Running test: ${name}`);
+            utils.logger.debug(`Running test: ${name}`);
             await require(`./tests/${filename}`);
             return test(index+1);
         })(0);
     }
 
-    logger.info("Getting user");
-    if ((await discord.api("/users/@me")).status != 200) return logger.error("Failed to get user, make sure token is correct");
-    return;
+    // Check user
+    utils.logger.info("Getting user");
+    if ((await utils.discord.api("/users/@me")).status != 200) return utils.logger.error("Failed to get user, make sure token is correct");
 
     // Connect to Discord
-    const client = new discord.Client(secret.discord.token, config.discord.intents);
-    client.on("ready",
-        data =>
-            console.log("Logged in:", data.user.username));
+    globals.client = new utils.discord.Client(secret.discord.token, config.discord.intents);
+
+    utils.loadEvents(); // Load events
+    // TODO: load commands, check registered commands through api and create/delete commands if necessary
 
     // TODO: make good
     process.on("SIGINT", async () => {
-        client.close();
+        utils.logger.closing("Closing bot");
+        globals.client.close();
         process.exit();
     });
 })();

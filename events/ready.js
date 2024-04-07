@@ -1,10 +1,13 @@
 // TODO: everything
-module.exports = class extends Event {
+
+const { utils } = globals;
+
+module.exports = class extends utils.Event {
     constructor() {
         super("ready");
     }
 
-    async run() {
-        console.log("ready!!!!")
+    async run(client) {
+        utils.logger.info("Bot online:", client.user.username)
     }
 }

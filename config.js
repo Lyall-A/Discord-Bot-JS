@@ -17,27 +17,21 @@ const config = {
                 type: 5
             }]
         },
-        // lol
         intents: [
             "GUILDS",
-            "GUILD_MEMBERS",
             "GUILD_MODERATION",
             "GUILD_EMOJIS_AND_STICKERS",
             "GUILD_INTEGRATIONS",
             "GUILD_WEBHOOKS",
             "GUILD_INVITES",
             "GUILD_VOICE_STATES",
-            "GUILD_PRESENCES",
             "GUILD_MESSAGES",
             "GUILD_MESSAGE_REACTIONS",
             "GUILD_MESSAGE_TYPING",
             "DIRECT_MESSAGES",
             "DIRECT_MESSAGE_REACTIONS",
             "DIRECT_MESSAGE_TYPING",
-            "MESSAGE_CONTENT",
-            "GUILD_SCHEDULED_EVENTS",
-            "AUTO_MODERATION_CONFIGURATION",
-            "AUTO_MODERATION_EXECUTION"
+            "GUILD_SCHEDULED_EVENTS"
         ]
     },
     logger: {
@@ -54,6 +48,9 @@ const config = {
         },
         debug: {
             prefix: `${colors.fgGray}[DEBUG]${colors.reset} `
+        },
+        closing: {
+            prefix: `\n${colors.fgMagenta}[CLOSING]${colors.reset} `
         }
     }
 }
