@@ -1,4 +1,4 @@
-// TODO: remove ws dep + options like automatic JSON parsing/stringify
+// TODO: remove ws dep + options like automatic JSON parsing/stringify (this will be hardddddd)
 const ws = require("ws");
 module.exports = {
     connection: class {

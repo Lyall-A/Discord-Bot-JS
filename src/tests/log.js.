@@ -3,3 +3,4 @@ utils.logger.info("Hello");
 utils.logger.warn("Hello");
 utils.logger.error("Hello");
 utils.logger.debug("Hello");
+utils.logger.closing("Hello);

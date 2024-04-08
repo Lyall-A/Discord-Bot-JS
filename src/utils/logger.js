@@ -1,3 +1,5 @@
+// TODO: option to append log to file
+const { config } = globals;
 const objectDefaults = require("./objectDefaults");
 
 function create(options) {
@@ -7,8 +9,8 @@ function create(options) {
         suffix: "",
         newLine: true,
     });
-    return function(msg) {
-        return options.stream.write(`${options.prefix}${msg}${options.suffix}${options.newLine ? "\n" : ""}`); // {prefix?}{message}{suffix?}{new line?}
+    return function(...msg) {
+        return options.stream.write(`${options.prefix}${msg.join(" ")}${options.suffix}${options.newLine ? "\n" : ""}`); // {prefix?}{message}{suffix?}{new line?}
     }
 }
 

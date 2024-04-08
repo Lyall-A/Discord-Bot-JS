@@ -1,8 +1,10 @@
-const colors = require("./src/utils/colors");
+const consoleColors = require("./src/utils/consoleColors");
 
 const config = {
     debug: true,
     secretPath: ".secret",
+    lang: "en",
+    langPath: "lang",
     discord: {
         gatewayUrl: "wss://gateway.discord.gg",
         gatewayVersion: 10,
@@ -36,22 +38,28 @@ const config = {
     },
     logger: {
         info: {
-            prefix: `${colors.fgCyan}[INFO]${colors.reset} `
+            prefix: consoleColors.string("[INFO] ", "cyan")
         },
         warn: {
-            prefix: `${colors.fgYellow}[WARN]${colors.reset} `
+            prefix: consoleColors.string("[WARN] ", "yellow")
         },
         error: {
             stream: process.stderr,
-            prefix: `${colors.fgRed}[ERROR]${colors.reset} ${colors.bgRed}`,
-            suffix: `${colors.reset}`
+            prefix: `${consoleColors.string("[ERROR] ", "red")}${consoleColors.bgRed}`,
+            suffix: `${consoleColors.reset}`
         },
         debug: {
-            prefix: `${colors.fgGray}[DEBUG]${colors.reset} `
+            prefix: consoleColors.string("[DEBUG] ", "gray")
         },
         closing: {
-            prefix: `\n${colors.fgMagenta}[CLOSING]${colors.reset} `
+            prefix: `\n${consoleColors.string("[CLOSING] ", "magenta")}`
         }
+    },
+    owners: [
+        "492729974026141697"
+    ],
+    channels: {
+        status: "1097157431609532528"
     }
 }
 

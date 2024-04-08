@@ -1,0 +1,1 @@
+module.exports = hex => parseInt(hex, 16);

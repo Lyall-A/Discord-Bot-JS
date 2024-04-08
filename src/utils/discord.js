@@ -1,6 +1,6 @@
 // TODO: event deletion on gateway close and stuff like that
 
-const { utils } = globals;
+const { utils, config, secret } = globals;
 
 const intents = {
     GUILDS: 1 << 0,
@@ -43,6 +43,18 @@ function api(path, options) {
     return utils.http(`${config.discord.apiUrl}/v${config.discord.apiVersion}${path}`, utils.objectDefaults(options, { headers: { "Authorization": `Bot ${secret.discord.token}` } }));
 }
 
+function sendMessage(channelId, content, embeds, data) {
+    // TODO: make good
+    return api(`/channels/${channelId}/messages`, {
+        method: "POST",
+        json: {
+            content,
+            embeds,
+            ...data
+        }
+    });
+}
+
 class Client {
     constructor(token, intents, identity) {
         this.listeners = [ ];
@@ -68,12 +80,14 @@ class Client {
             setTimeout(() => utils.eventListener.call(message.t.toUpperCase(), this.listeners, [data, message]));
         });
         this.gateway.onEvent("READY", data => {
+            this.readyTime = Date.now() - this.gateway.beforeConnectTime;
             this.bot = data;
             this.user = data.user;
             this.gatewayVersion = data.v;
             this.sessionType = data.session_type;
             this.sessionId = data.session_id;
             this.resumeGatewayUrl = data.resume_gateway_url;
+            this.guilds = data.guilds
             this.application = data.application;
             this.rtcRegions = data.geo_ordered_rtc_regions;
         });
@@ -89,7 +103,9 @@ class Gateway {
         this.opListeners = { };
         this.eventListeners = { };
 
+        this.beforeConnectTime = Date.now();
         this.gateway = new utils.ws.connection(`${config.discord.gatewayUrl}?v=${config.discord.gatewayVersion}&encoding=json`, { json: true });
+        this.gateway.on("open", () => this.connectTime = Date.now() - this.beforeConnectTime);
         this.gateway.on("message", message => {
             if (typeof message.op == "number") utils.eventListener.call(message.op, this.opListeners, [message.d, message]);
             if (message.t && !message.op) utils.eventListener.call(message.t, this.eventListeners, [message.d, message]);
@@ -99,7 +115,7 @@ class Gateway {
     on = (event, callback) => { this.gateway.on(event, callback) };
     onOp = (op, callback) => { utils.eventListener.create(op, callback, this.opListeners) };
     onEvent = (event, callback) => { utils.eventListener.create(event.toUpperCase(), callback, this.eventListeners) };
-    send =(op, data) => { this.gateway.send({ s: null, op, d: data }) };
+    send = (op, data) => { this.gateway.send({ s: null, op, d: data }) };
     close = () => { this.gateway.close(1000) };
 };
 module.exports = {
@@ -107,6 +123,7 @@ module.exports = {
     parseIntents,
     parseIntentsInt,
     api,
+    sendMessage,
     Client,
     Gateway
 }
