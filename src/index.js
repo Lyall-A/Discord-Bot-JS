@@ -10,6 +10,8 @@ const secret = JSON.parse(fs.readFileSync(config.secretPath, "utf-8")); // Secre
 globals = {
     config,
     secret,
+    commands: { },
+    events: { },
     utils: { },
     startTime: Date.now(),
     lang: JSON.parse(fs.readFileSync(path.join(config.langPath, `${config.lang}.json`), "utf-8")),
@@ -48,7 +50,9 @@ require("./utils/getFiles")("./src/utils", i => path.extname(i) == ".js")
     globals.client = new utils.discord.Client(secret.discord.token, config.discord.intents);
 
     utils.loadEvents(); // Load events
+    utils.loadCommands() // Load commands
     // TODO: load commands, check registered commands through api and create/delete commands if necessary
+    await utils.registerCommands() // Register commands if necessary
 
     // TODO: make good
     process.on("SIGINT", async () => {

@@ -1,18 +1,18 @@
 const fs = require("fs");
 const path = require("path");
 
-function getFiles(dirPath, filter, depth, currDepth = 0) {
+function getFiles(dirPath, fileFilter, dirFilter, depth, currDepth = 0) {
     const files = [ ];
 
     fs.readdirSync(dirPath)
-        .filter(typeof filter == "function" ? filter : () => true)
+        .filter(typeof dirFilter == "function" ? dirFilter : () => true)
         .forEach(fileName => {
             const joinedPath = path.join(dirPath, fileName);
             if (fs.lstatSync(joinedPath).isDirectory()) {
                 if ((depth && currDepth < depth) || !depth)
-                    files.push(...getFiles(joinedPath, filter, depth, currDepth+1));
+                    files.push(...getFiles(joinedPath, fileFilter, dirFilter, depth, currDepth+1));
             } else {
-                files.push(joinedPath);
+                if (typeof fileFilter == "function" ? fileFilter(joinedPath) : true) files.push(joinedPath);
             }
         });
 

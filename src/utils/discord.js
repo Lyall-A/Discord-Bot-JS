@@ -1,4 +1,5 @@
 // TODO: event deletion on gateway close and stuff like that
+// TODO: i think i should make the gateway function a promise that resolves once connected to gateway, rejects if error before??????
 
 const { utils, config, secret } = globals;
 
