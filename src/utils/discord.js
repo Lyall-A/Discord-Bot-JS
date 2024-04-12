@@ -1,5 +1,5 @@
 // TODO: event deletion on gateway close and stuff like that
-// TODO: i think i should make the gateway function a promise that resolves once connected to gateway, rejects if error before??????
+// TODO: delete all these functions?
 
 const { utils, config, secret } = globals;
 
@@ -44,6 +44,10 @@ function api(path, options) {
     return utils.http(`${config.discord.apiUrl}/v${config.discord.apiVersion}${path}`, utils.objectDefaults(options, { headers: { "Authorization": `Bot ${secret.discord.token}` } }));
 }
 
+function getGlobalCommands(id) {
+    return api(`/applications/${id}/commands`).then(i => i.json());
+}
+
 function sendMessage(channelId, content, embeds, data) {
     // TODO: make good
     return api(`/channels/${channelId}/messages`, {
@@ -53,7 +57,7 @@ function sendMessage(channelId, content, embeds, data) {
             embeds,
             ...data
         }
-    });
+    }).then(i => i.json());
 }
 
 class Client {
@@ -81,21 +85,39 @@ class Client {
             setTimeout(() => utils.eventListener.call(message.t.toUpperCase(), this.listeners, [data, message]));
         });
         this.gateway.onEvent("READY", data => {
-            this.readyTime = Date.now() - this.gateway.beforeConnectTime;
             this.bot = data;
+            this.readyTime = Date.now() - this.gateway.beforeConnectTime;
+            // this.bot = data;
             this.user = data.user;
-            this.gatewayVersion = data.v;
-            this.sessionType = data.session_type;
-            this.sessionId = data.session_id;
-            this.resumeGatewayUrl = data.resume_gateway_url;
-            this.guilds = data.guilds
-            this.application = data.application;
-            this.rtcRegions = data.geo_ordered_rtc_regions;
+            // this.gatewayVersion = data.v;
+            // this.sessionType = data.session_type;
+            // this.sessionId = data.session_id;
+            // this.resumeGatewayUrl = data.resume_gateway_url;
+            // this.guilds = data.guilds
+            // this.application = data.application;
+            // this.rtcRegions = data.geo_ordered_rtc_regions;
         });
     }
 
     on = (event, callback) => { utils.eventListener.create(event.toUpperCase(), callback, this.listeners) };
     close = () => { this.gateway.close() };
+
+    // TODO: make this, copying djs????????
+    application = {
+        
+    }
+
+    users = {
+
+    }
+
+    guilds = { 
+
+    }
+
+    channels = {
+
+    }
 };
 
 class Gateway {
@@ -123,6 +145,7 @@ module.exports = {
     intents,
     parseIntents,
     parseIntentsInt,
+    getGlobalCommands,
     api,
     sendMessage,
     Client,

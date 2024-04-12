@@ -52,7 +52,7 @@ require("./utils/getFiles")("./src/utils", i => path.extname(i) == ".js")
     utils.loadEvents(); // Load events
     utils.loadCommands() // Load commands
     // TODO: load commands, check registered commands through api and create/delete commands if necessary
-    await utils.registerCommands() // Register commands if necessary
+    // await utils.registerCommands() // Register commands if necessary
 
     // TODO: make good
     process.on("SIGINT", async () => {
