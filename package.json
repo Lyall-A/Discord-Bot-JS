@@ -12,7 +12,6 @@
   "dependencies": {
     "ws": "^8.16.0"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Lyall-A/Discord-Bot-JS.git"
