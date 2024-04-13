@@ -47,6 +47,7 @@ require("./utils/getFiles")("./src/utils", i => path.extname(i) == ".js")
     if ((await utils.discord.api("/users/@me")).status != 200) return utils.logger.error("Failed to get user, make sure token is correct");
 
     // Connect to Discord
+    utils.logger.info("Connecting to Gateway");
     globals.client = new utils.discord.Client(secret.discord.token, config.discord.intents);
 
     utils.loadEvents(); // Load events

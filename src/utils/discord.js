@@ -73,7 +73,9 @@ class Client {
         this.gateway = new Gateway(); // Stage 1
         this.gateway.onOp(10, data => {
             // Hello event (stage 2)
-            this.heartbeatInterval = setInterval(() => this.gateway.send(1, null), data.heartbeat_interval); // Heartbeat interval (stage 3)
+
+            // Heartbeat interval (stage 3) moved to Gateway class
+
             // Send identity (stage 4)
             this.gateway.send(2, {
                 token,
@@ -81,21 +83,19 @@ class Client {
                 ...identity
             });
         });
+
         this.gateway.onOp(0, (data, message) => {
             setTimeout(() => utils.eventListener.call(message.t.toUpperCase(), this.listeners, [data, message]));
         });
+
         this.gateway.onEvent("READY", data => {
-            this.bot = data;
-            this.readyTime = Date.now() - this.gateway.beforeConnectTime;
-            // this.bot = data;
-            this.user = data.user;
-            // this.gatewayVersion = data.v;
-            // this.sessionType = data.session_type;
-            // this.sessionId = data.session_id;
-            // this.resumeGatewayUrl = data.resume_gateway_url;
-            // this.guilds = data.guilds
-            // this.application = data.application;
-            // this.rtcRegions = data.geo_ordered_rtc_regions;
+            // TODO: a lot
+        });
+
+        this.gateway.on("close", code => {
+            if (code == 1000) return;
+            // Reconnect
+            console.log(this.gateway)
         });
     }
 
@@ -128,10 +128,28 @@ class Gateway {
 
         this.beforeConnectTime = Date.now();
         this.gateway = new utils.ws.connection(`${config.discord.gatewayUrl}?v=${config.discord.gatewayVersion}&encoding=json`, { json: true });
+
         this.gateway.on("open", () => this.connectTime = Date.now() - this.beforeConnectTime);
+
         this.gateway.on("message", message => {
             if (typeof message.op == "number") utils.eventListener.call(message.op, this.opListeners, [message.d, message]);
             if (message.t && !message.op) utils.eventListener.call(message.t, this.eventListeners, [message.d, message]);
+        });
+
+        this.onOp(10, data => {
+            if (!data.heartbeat_interval) throw new Error("No heartbeat_interval in data")
+            this.heartbeatInterval = setInterval(() => this.send(1, null), data.heartbeat_interval); // Heartbeat interval (stage 3)
+        });
+
+        this.onEvent("READY", data => {
+            this.user = data.user;
+            this.gatewayVersion = data.v;
+            this.sessionType = data.session_type;
+            this.sessionId = data.session_id;
+            this.resumeGatewayUrl = data.resume_gateway_url;
+            this.guilds = data.guilds
+            this.application = data.application;
+            this.rtcRegions = data.geo_ordered_rtc_regions;
         });
     }
 
