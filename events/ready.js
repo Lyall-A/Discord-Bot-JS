@@ -9,7 +9,8 @@ module.exports = class extends utils.Event {
     }
 
     async run(client) {
-        utils.logger.info("Bot online:"/*, client.user.username*/);
+        // utils.logger.info("Bot online:"/*, client.user.username*/);
+        utils.logger.info("Bot online");
         // TODO: make embed better
         // await utils.discord.sendMessage(config.channels.status, null, [{
         //     title: "Online",

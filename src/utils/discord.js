@@ -127,7 +127,7 @@ class Gateway {
         this.eventListeners = { };
 
         this.beforeConnectTime = Date.now();
-        this.gateway = new utils.ws.connection(`${config.discord.gatewayUrl}?v=${config.discord.gatewayVersion}&encoding=json`, { json: true });
+        this.gateway = new utils.ws.connection(`${globals.gatewayUrl}?v=${config.discord.gatewayVersion}&encoding=json`, { json: true });
 
         this.gateway.on("open", () => this.connectTime = Date.now() - this.beforeConnectTime);
 

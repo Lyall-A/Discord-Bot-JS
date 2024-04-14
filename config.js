@@ -5,8 +5,10 @@ const config = {
     secretPath: ".secret",
     lang: "en",
     langPath: "lang",
+    shard: 0,
     discord: {
-        gatewayUrl: "wss://gateway.discord.gg",
+        gatewayUrl: "wss://gateway.discord.gg", // Set this to null to grab the gateway URL on startup
+        // shards: 1, // Set this to null to use the recommended number of shards (this will ignore gatewayUrl)
         gatewayVersion: 10,
         apiUrl: "https://discord.com/api",
         apiVersion: 10,
@@ -36,6 +38,8 @@ const config = {
             "GUILD_SCHEDULED_EVENTS"
         ]
     },
+    logFiles: true,
+    logFilesDelete: 7 * 24 * 60 * 60 * 1000 , // 1 week, 7 (days), 24 (hours), 60 (minutes), 60 (seconds), 1000 (milliseconds)
     logger: {
         info: {
             prefix: consoleColors.string("[INFO] ", "cyan")
@@ -46,13 +50,15 @@ const config = {
         error: {
             stream: process.stderr,
             prefix: `${consoleColors.string("[ERROR] ", "red")}${consoleColors.bgRed}`,
-            suffix: `${consoleColors.reset}`
+            suffix: `${consoleColors.reset}`,
+            join: "\n"
         },
         debug: {
             prefix: consoleColors.string("[DEBUG] ", "gray")
         },
         closing: {
-            prefix: `\n${consoleColors.string("[CLOSING] ", "magenta")}`
+            prefix: `\n${consoleColors.string("[CLOSING] ", "magenta")}`,
+            logFiles: false,
         }
     },
     owners: [

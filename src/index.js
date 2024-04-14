@@ -10,6 +10,8 @@ const secret = JSON.parse(fs.readFileSync(config.secretPath, "utf-8")); // Secre
 globals = {
     config,
     secret,
+    gatewayUrl: config.discord.gatewayUrl,
+    shards: config.discord.shards,
     commands: { },
     events: { },
     utils: { },
@@ -43,11 +45,22 @@ require("./utils/getFiles")("./src/utils", i => path.extname(i) == ".js")
     }
 
     // Check user
-    utils.logger.info("Getting user");
+    utils.logger.info("Verifying that token is valid");
     if ((await utils.discord.api("/users/@me")).status != 200) return utils.logger.error("Failed to get user, make sure token is correct");
 
+    if (!globals.shards || !globals.gatewayUrl) {
+        // Get gateway URL
+        const gatewayInfo = await utils.discord.api("/gateway/bot")
+            .then(i => i.json())
+            .catch(err => utils.logger.error("Failed to get Gateway information!", err));
+        if (!gatewayInfo?.url) return utils.logger.error("Couldn't get Gateway URL from Gateway information", gatewayInfo);
+
+        globals.gatewayUrl = gatewayInfo.url;
+        if (!globals.shards) globals.shards = globals.gatewayUrl.shards;
+    }
+
     // Connect to Discord
-    utils.logger.info("Connecting to Gateway");
+    utils.logger.info("Connecting to Gateway at", globals.gatewayUrl);
     globals.client = new utils.discord.Client(secret.discord.token, config.discord.intents);
 
     utils.loadEvents(); // Load events
