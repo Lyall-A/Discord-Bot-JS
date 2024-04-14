@@ -5,20 +5,20 @@ const path = require("path");
 
 const config = require("../config"); // Config
 const secret = JSON.parse(fs.readFileSync(config.secretPath, "utf-8")); // Secret
+const constants = require("./constants.json");
 
 // Globals
 globals = {
     config,
     secret,
+    constants,
     gatewayUrl: config.discord.gatewayUrl,
     shards: config.discord.shards,
     commands: { },
     events: { },
     utils: { },
-    startTime: Date.now(),
-    lang: JSON.parse(fs.readFileSync(path.join(config.langPath, `${config.lang}.json`), "utf-8")),
-    numbers: [0,1,2,3,4,5,6,7,8,9],
-    letters: ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+    startDate: new Date(),
+    lang: JSON.parse(fs.readFileSync(path.join(config.langPath, `${config.lang}.json`), "utf-8"))
 };
 
 const { utils } = globals;

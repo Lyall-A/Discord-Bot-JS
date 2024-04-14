@@ -38,8 +38,12 @@ const config = {
             "GUILD_SCHEDULED_EVENTS"
         ]
     },
+    timestampFormat: "%{DD}/%{MM}/%{YYYY} %{hh12}:%{mm} %{amPM}",
+    logTimestampFormat: `${consoleColors.string(`[%{timestamp}] `, "green")}`,
+    logTimestamp: true,
     logFiles: true,
-    logFilesDelete: 7 * 24 * 60 * 60 * 1000 , // 1 week, 7 (days), 24 (hours), 60 (minutes), 60 (seconds), 1000 (milliseconds)
+    logFileName: "%{DD}-%{MM}-%{YY} %{hh}-%{mm}-%{ss} %{ms}.log",
+    logFilesDelete: 7 * 24 * 60 * 60 * 1000, // 1 week, 7 (days), 24 (hours), 60 (minutes), 60 (seconds), 1000 (milliseconds)
     logger: {
         info: {
             prefix: consoleColors.string("[INFO] ", "cyan")
@@ -57,7 +61,7 @@ const config = {
             prefix: consoleColors.string("[DEBUG] ", "gray")
         },
         closing: {
-            prefix: `\n${consoleColors.string("[CLOSING] ", "magenta")}`,
+            prefix: `${consoleColors.string("[CLOSING] ", "magenta")}`,
             logFiles: false,
         }
     },
