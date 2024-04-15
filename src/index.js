@@ -1,5 +1,3 @@
-// TODO: everything
-// TODO: move everything to lang?? (effort)
 const fs = require("fs");
 const path = require("path");
 
@@ -18,8 +16,9 @@ globals = {
     events: { },
     utils: { },
     startDate: new Date(),
-    lang: JSON.parse(fs.readFileSync(path.join(config.langPath, `${config.lang}.json`), "utf-8"))
 };
+
+globals.lang = require(path.resolve(config.langPath, config.lang));
 
 const { utils } = globals;
 
@@ -38,29 +37,30 @@ require("./utils/getFiles")("./src/utils", i => path.extname(i) == ".js")
             if (!testsDir[index]) return;
             const filename = testsDir[index];
             const name = path.basename(filename, path.extname(filename));
-            utils.logger.debug(`Running test: ${name}`);
+            utils.logger.debug(utils.lang("runningTest", { name }));
             await require(`./tests/${filename}`);
             return test(index+1);
         })(0);
     }
 
     // Check user
-    utils.logger.info("Verifying that token is valid");
-    if ((await utils.discord.api("/users/@me")).status != 200) return utils.logger.error("Failed to get user, make sure token is correct");
+    utils.logger.info(utils.lang("verifyingToken"));
+    // utils.logger.info("Verifying that token is valid");
+    if ((await utils.discord.api("/users/@me")).status != 200) return utils.logger.error(utils.lang("failedToken"));
 
     if (!globals.shards || !globals.gatewayUrl) {
         // Get gateway URL
         const gatewayInfo = await utils.discord.api("/gateway/bot")
             .then(i => i.json())
-            .catch(err => utils.logger.error("Failed to get Gateway information!", err));
-        if (!gatewayInfo?.url) return utils.logger.error("Couldn't get Gateway URL from Gateway information", gatewayInfo);
+            .catch(err => utils.logger.error(utils.lang("failedGatewayInfo"), err));
+        if (!gatewayInfo?.url) return utils.logger.error(utils.lang("failedGatewayUrl"), gatewayInfo);
 
         globals.gatewayUrl = gatewayInfo.url;
         if (!globals.shards) globals.shards = globals.gatewayUrl.shards;
     }
 
     // Connect to Discord
-    utils.logger.info("Connecting to Gateway at", globals.gatewayUrl);
+    utils.logger.info(utils.lang("connectingGateway"));
     globals.client = new utils.discord.Client(secret.discord.token, config.discord.intents);
 
     utils.loadEvents(); // Load events
@@ -68,9 +68,8 @@ require("./utils/getFiles")("./src/utils", i => path.extname(i) == ".js")
     // TODO: load commands, check registered commands through api and create/delete commands if necessary
     // await utils.registerCommands() // Register commands if necessary
 
-    // TODO: make good
     process.on("SIGINT", async () => {
-        utils.logger.closing("Closing bot");
+        utils.logger.closing(utils.lang("closingBot"));
         globals.client.close();
         process.exit();
     });
