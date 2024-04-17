@@ -3,6 +3,7 @@
 
 const { utils, config, secret } = globals;
 
+// https://discord.com/developers/docs/topics/gateway#list-of-intents
 const intents = {
     GUILDS: 1 << 0,
     GUILD_MEMBERS: 1 << 1,
@@ -25,6 +26,27 @@ const intents = {
     AUTO_MODERATION_EXECUTION: 1 << 21
 };
 
+const applicationCommandTypes = {
+    CHAT_INPUT: 1, // Slash commands; a text-based command that shows up when a user types /
+    USER: 2, // A UI-based command that shows up when you right click or tap on a user
+    MESSAGE: 3 // A UI-based command that shows up when you right click or tap on a message
+}
+
+// https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
+const applicationCommandOptionTypes = {
+    SUB_COMMAND: 1,
+    SUB_COMMAND_GROUP: 2,
+    STRING: 3,
+    INTEGER: 4, // Any integer between -2^53 and 2^53
+    BOOLEAN: 5,
+    USER: 6,
+    CHANNEL: 7, // Includes all channel types + categories
+    ROLE: 8,
+    MENTIONABLE: 9, // Includes users and roles
+    NUMBER: 10, // Any double between -2^53 and 2^53
+    ATTACHMENT: 11 // attachment object
+}
+
 function parseIntents(array) {
     return array.map(i => intents[i.toUpperCase()]).filter(i=>i).reduce((prev, curr) => prev + curr);
 }
@@ -44,21 +66,23 @@ function api(path, options) {
     return utils.http(`${config.discord.apiUrl}/v${config.discord.apiVersion}${path}`, utils.objectDefaults(options, { headers: { "Authorization": `Bot ${secret.discord.token}` } }));
 }
 
-function getGlobalCommands(id) {
-    return api(`/applications/${id}/commands`).then(i => i.json());
-}
 
-function sendMessage(channelId, content, embeds, data) {
-    // TODO: make good
-    return api(`/channels/${channelId}/messages`, {
-        method: "POST",
-        json: {
-            content,
-            embeds,
-            ...data
-        }
-    }).then(i => i.json());
-}
+// COMMENTED OUT BECAUSE I WANT THIS STUFF BEHIND CLIENT CLASS THING
+// function getGlobalCommands(id) {
+//     return api(`/applications/${id}/commands`).then(i => i.json());
+// }
+
+// function sendMessage(channelId, content, embeds, data) {
+//     // TODO: make good
+//     return api(`/channels/${channelId}/messages`, {
+//         method: "POST",
+//         json: {
+//             content,
+//             embeds,
+//             ...data
+//         }
+//     }).then(i => i.json());
+// }
 
 class Client {
     constructor(token, intents, identity) {
@@ -159,13 +183,16 @@ class Gateway {
     send = (op, data) => { this.gateway.send({ s: null, op, d: data }) };
     close = () => { this.gateway.close(1000) };
 };
+
 module.exports = {
     intents,
+    applicationCommandTypes,
+    applicationCommandOptionTypes,
     parseIntents,
     parseIntentsInt,
-    getGlobalCommands,
     api,
-    sendMessage,
     Client,
     Gateway
+    // getGlobalCommands,
+    // sendMessage,
 }

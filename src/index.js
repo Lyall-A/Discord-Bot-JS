@@ -66,7 +66,7 @@ require("./utils/getFiles")("./src/utils", i => path.extname(i) == ".js")
     utils.loadEvents(); // Load events
     utils.loadCommands() // Load commands
     // TODO: load commands, check registered commands through api and create/delete commands if necessary
-    // await utils.registerCommands() // Register commands if necessary
+    await utils.registerCommands();
 
     process.on("SIGINT", async () => {
         utils.logger.closing(utils.lang("closingBot"));
