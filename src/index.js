@@ -60,7 +60,7 @@ require("./utils/getFiles")("./src/utils", i => path.extname(i) == ".js")
     }
 
     // Connect to Discord
-    utils.logger.info(utils.lang("connectingGateway"));
+    utils.logger.info(utils.lang("connectingGateway", { gatewayUrl: globals.gatewayUrl }));
     globals.client = new utils.discord.Client(secret.discord.token, config.discord.intents);
 
     utils.loadEvents(); // Load events
@@ -72,5 +72,6 @@ require("./utils/getFiles")("./src/utils", i => path.extname(i) == ".js")
         utils.logger.closing(utils.lang("closingBot"));
         globals.client.close();
         process.exit();
+        // setTimeout(() => process.exit(), 1000);
     });
 })();

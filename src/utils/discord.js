@@ -48,11 +48,11 @@ const applicationCommandOptionTypes = {
 }
 
 function parseIntents(array) {
-    return array.map(i => intents[i.toUpperCase()]).filter(i=>i).reduce((prev, curr) => prev + curr);
+    return array.map(i => intents[i.toUpperCase()]).filter(i => i).reduce((prev, curr) => prev + curr);
 }
 
 function parseIntentsInt(int) {
-    const parsed = [ ];
+    const parsed = [];
     Object.entries(intents).reverse().forEach((name, value) => {
         if (int <= value) {
             int - value;
@@ -86,10 +86,10 @@ function api(path, options) {
 
 class Client {
     constructor(token, intents, identity) {
-        this.listeners = [ ];
+        this.listeners = [];
         identity = utils.objectDefaults(identity, {
-            properties: utils.objectDefaults(config.discord.properties, { }),
-            presence: utils.objectDefaults(config.discord.presence, { })
+            properties: utils.objectDefaults(config.discord.properties, {}),
+            presence: utils.objectDefaults(config.discord.presence, {})
         });
         const intentsInt = (typeof intents == "object" ? parseIntents(intents) : intents) || 0;
 
@@ -109,11 +109,17 @@ class Client {
         });
 
         this.gateway.onOp(0, (data, message) => {
-            setTimeout(() => utils.eventListener.call(message.t.toUpperCase(), this.listeners, [data, message]));
+            // TODO: i wanna make it return my own object instead of just what gateway sends (aka effort)
+
+            // NOTE: this is in a setTimeout so the below READY event is called first
+            setTimeout(() => {
+                utils.eventListener.call(message.t.toUpperCase(), this.listeners, [data, message]);
+            });
         });
 
         this.gateway.onEvent("READY", data => {
             // TODO: a lot
+            this.user = data.user;
         });
 
         this.gateway.on("close", code => {
@@ -128,14 +134,14 @@ class Client {
 
     // TODO: make this, copying djs????????
     application = {
-        
+
     }
 
     users = {
 
     }
 
-    guilds = { 
+    guilds = {
 
     }
 
@@ -146,9 +152,9 @@ class Client {
 
 class Gateway {
     constructor() {
-        this.listeners = { };
-        this.opListeners = { };
-        this.eventListeners = { };
+        this.listeners = {};
+        this.opListeners = {};
+        this.eventListeners = {};
 
         this.beforeConnectTime = Date.now();
         this.gateway = new utils.ws.connection(`${globals.gatewayUrl}?v=${config.discord.gatewayVersion}&encoding=json`, { json: true });

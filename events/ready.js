@@ -1,6 +1,4 @@
 // TODO: everything
-const os = require("os");
-
 const { utils, config } = globals;
 
 module.exports = class extends utils.Event {
@@ -9,7 +7,7 @@ module.exports = class extends utils.Event {
     }
 
     async run(client) {
-        // utils.logger.info("Bot online:"/*, client.user.username*/);
-        utils.logger.info("Bot online");
+        utils.logger.info("Bot online:", client.user.username);
+        // utils.logger.info("Bot online");
     }
 }
