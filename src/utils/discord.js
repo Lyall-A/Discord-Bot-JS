@@ -26,11 +26,41 @@ const intents = {
     AUTO_MODERATION_EXECUTION: 1 << 21
 };
 
+// https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-opcodes
+const gatewayOpcodes = {
+    dispatch: 0,
+    heartbeat: 1,
+    identify: 2,
+    presenceUpdate: 3,
+    voiceStateUpdate: 4,
+    resume: 6,
+    reconnect: 7,
+    requestGuildMembers: 8,
+    invalidSession: 9,
+    hello: 10,
+    heartbeatAck: 11
+};
+
+// https://discord.com/developers/docs/topics/opcodes-and-status-codes#gateway-gateway-close-event-codes
+const gatewayCloseEventCodes = {
+    // TODO
+};
+
 const applicationCommandTypes = {
     CHAT_INPUT: 1, // Slash commands; a text-based command that shows up when a user types /
     USER: 2, // A UI-based command that shows up when you right click or tap on a user
     MESSAGE: 3 // A UI-based command that shows up when you right click or tap on a message
-}
+};
+
+// https://discord.com/developers/docs/topics/opcodes-and-status-codes#voice-voice-opcodes
+const voiceOpcodes = {
+    // TODO
+};
+
+// https://discord.com/developers/docs/topics/opcodes-and-status-codes#voice-voice-close-event-codes
+const voiceCloseEventCodes = {
+    // TODO
+};
 
 // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-type
 const applicationCommandOptionTypes = {
@@ -47,42 +77,37 @@ const applicationCommandOptionTypes = {
     ATTACHMENT: 11 // attachment object
 }
 
+const events = {
+    // TODO: make better? this is probably the shittiest way possible
+    INTERACTION_CREATE: class {
+        constructor(rawData) {
+            this._raw = rawData;
+        };
+
+        token = this._raw.token;
+    }
+}
+
 function parseIntents(array) {
+    // Object > Number
     return array.map(i => intents[i.toUpperCase()]).filter(i => i).reduce((prev, curr) => prev + curr);
 }
 
 function parseIntentsInt(int) {
+    // Number > Object
     const parsed = [];
-    Object.entries(intents).reverse().forEach((name, value) => {
-        if (int <= value) {
-            int - value;
+    Object.entries(intents).reverse().forEach(([name, value]) => {
+        if (int >= value) {
+            int -= value;
             parsed.push(name);
         };
     });
-    return parsed;
+    return parsed.reverse();
 }
 
 function api(path, options) {
     return utils.http(`${config.discord.apiUrl}/v${config.discord.apiVersion}${path}`, utils.objectDefaults(options, { headers: { "Authorization": `Bot ${secret.discord.token}` } }));
 }
-
-
-// COMMENTED OUT BECAUSE I WANT THIS STUFF BEHIND CLIENT CLASS THING
-// function getGlobalCommands(id) {
-//     return api(`/applications/${id}/commands`).then(i => i.json());
-// }
-
-// function sendMessage(channelId, content, embeds, data) {
-//     // TODO: make good
-//     return api(`/channels/${channelId}/messages`, {
-//         method: "POST",
-//         json: {
-//             content,
-//             embeds,
-//             ...data
-//         }
-//     }).then(i => i.json());
-// }
 
 class Client {
     constructor(token, intents, identity) {
@@ -108,12 +133,14 @@ class Client {
             });
         });
 
-        this.gateway.onOp(0, (data, message) => {
+        this.gateway.onOp(0, (rawData, message) => {
             // TODO: i wanna make it return my own object instead of just what gateway sends (aka effort)
+            const eventName = message.t.toUpperCase();
+            const data = events[eventName] ? new events[eventName](data) : { _raw: rawData };
 
             // NOTE: this is in a setTimeout so the below READY event is called first
             setTimeout(() => {
-                utils.eventListener.call(message.t.toUpperCase(), this.listeners, [data, message]);
+                utils.eventListener.call(eventName, this.listeners, [data, message]);
             });
         });
 
