@@ -11,6 +11,9 @@ module.exports = async () => {
     //     ...i.additionalFields
     // }));
 
+    // const globalCommands = await globals.client.application.commands.global.get();
+    // console.log(globalCommands[1]);
+
     // utils.discord.api(`/applications/${utils.getIdFromToken(secret.discord.token)}/commands`, {
     //     method: "PUT",
     //     json: cmds

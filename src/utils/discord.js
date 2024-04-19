@@ -82,9 +82,34 @@ const events = {
     INTERACTION_CREATE: class {
         constructor(rawData) {
             this._raw = rawData;
-        };
 
-        token = this._raw.token;
+            this.token = this._raw.token;
+        };
+    }
+}
+
+const application = {
+    // TODO: idk what im doing
+    Command: class {
+        constructor(rawCommand) {
+            this._raw = rawCommand;
+
+            this.id = this._raw.id;
+            this.applicationId = this._raw.application_id;
+            this.type = this._raw.type;
+            this.typeString = Object.entries(applicationCommandTypes).find(([key, value]) => value == this._raw.type )?.[0];
+            this.name = this._raw.name;
+            this.description = this._raw.description;
+            this.nsfw = this._raw.nsfw;
+            this.options = this._raw.options ? this._raw.options.map(i => new application.CommandOption(i)) : null
+        }
+    },
+
+    CommandOption: class {
+        constructor(rawOption) {
+            this._raw = rawOption;
+            // TODO implement this from https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-option-structure
+        }
     }
 }
 
@@ -111,12 +136,19 @@ function api(path, options) {
 
 class Client {
     constructor(token, intents, identity) {
+        this.token = token;
+        this.intents = intents;
+
+        this.id = utils.getIdFromToken(token);
+        
         this.listeners = [];
+        
         identity = utils.objectDefaults(identity, {
             properties: utils.objectDefaults(config.discord.properties, {}),
             presence: utils.objectDefaults(config.discord.presence, {})
         });
-        const intentsInt = (typeof intents == "object" ? parseIntents(intents) : intents) || 0;
+        this.identity = identity;
+        this.intentsInt = (typeof intents == "object" ? parseIntents(intents) : intents) || 0;
 
         // https://discord.com/developers/docs/topics/gateway#connection-lifecycle
         this.gateway = new Gateway(); // Stage 1
@@ -128,7 +160,7 @@ class Client {
             // Send identity (stage 4)
             this.gateway.send(2, {
                 token,
-                intents: intentsInt,
+                intents: this.intentsInt,
                 ...identity
             });
         });
@@ -161,7 +193,16 @@ class Client {
 
     // TODO: make this, copying djs????????
     application = {
+        commands: {
+            global: {
+                get: async () => {
+                    return await api(`/applications/${this.id}/commands`).then(i => i.json()).then(commands => commands.map(i => new application.Command(i)));
+                }
+            },
+            guild: {
 
+            }
+        }
     }
 
     users = {
