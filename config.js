@@ -29,9 +29,10 @@ const config = {
     logTimestampFormat: `${consoleColors.string(`[%{timestamp}] `, "green")}`,
     logTimestamp: true,
     logFiles: true,
+    logPath: "logs",
     logFileName: "%{DD}-%{MM}-%{YY} %{hh}-%{mm}-%{ss} %{ms}.log",
-    logFilesDelete: 7 * 24 * 60 * 60 * 1000, // Delete logs after x milliseconds. 1 week, 7 (days), 24 (hours), 60 (minutes), 60 (seconds), 1000 (milliseconds) // TODO
-    logFilesCheck: 1 * 60 * 60 * 1000, // Check for outdated logs every x milliseconds. 1 (hours), 60 (minutes), 60 (seconds), 1000 (milliseconds) // TODO
+    logFilesDelete: 24 * 60 * 60 * 1000, // Delete logs after x milliseconds. 24 (hours), 60 (minutes), 60 (seconds), 1000 (milliseconds)
+    logFilesCheck: 1 * 60 * 60 * 1000, // Check for outdated logs every x milliseconds. 1 (hours), 60 (minutes), 60 (seconds), 1000 (milliseconds)
     logger: {
         info: {
             prefix: consoleColors.string("[INFO] ", "cyan")

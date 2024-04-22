@@ -1,6 +1,7 @@
 // TODO: delete logs
 const util = require("util");
 const fs = require("fs");
+const path = require("path");
 
 const { config, utils, startDate } = globals;
 const objectDefaults = require("./objectDefaults");
@@ -35,10 +36,9 @@ function create(options) {
 
         options.stream.write(log);
 
-        // Append to log file (TODO)
-        if (options.logFiles) fs.appendFile(`./logs/${utils.timestamp(startDate, {
+        if (options.logFiles) fs.appendFile(path.join(config.logPath, utils.timestamp(startDate, {
             format: config.logFileName
-        })}`, log.replace(/\x1b\[.*?m/g, ""), () => { });
+        })), log.replace(/\x1b\[.*?m/g, ""), () => { });
     }
 }
 

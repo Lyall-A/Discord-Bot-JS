@@ -15,6 +15,8 @@ globals = {
     commands: { },
     events: { },
     utils: { },
+    intervals: { },
+    timeouts: { },
     startDate: new Date(),
 };
 
@@ -41,7 +43,11 @@ require("./utils/getFiles")("./src/utils", i => path.extname(i) == ".js")
             await require(`./tests/${filename}`);
             return test(index+1);
         })(0);
-    }
+    };
+
+    // Check and remove old logs
+    utils.checkLogs();
+    globals.intervals.checkLogsInterval = setInterval(() => utils.checkLogs(), config.logFilesCheck);
 
     // Check user
     utils.logger.info(utils.lang("verifyingToken"));
