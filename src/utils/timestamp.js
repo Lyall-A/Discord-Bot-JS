@@ -1,13 +1,16 @@
-const { utils, config } = globals;
+// const { utils, config } = globals;
+const objectDefaults = require("./objectDefaults");
+const parseDate = require("./parseDate");
+const formatString = require("./formatString");
 
 module.exports = (date = new Date(), options) => {
-    options = utils.objectDefaults(options, {
+    options = objectDefaults(options, {
         use12Hour: config.use12Hour,
         format: config.timestampFormat
     });
 
-    const parsedDate = utils.parseDate(date);
-    return utils.formatString(options.format, {
+    const parsedDate = parseDate(date);
+    return formatString(options.format, {
         DD: parsedDate.dayPad,
         D: parsedDate.day,
         MM: parsedDate.monthPad,

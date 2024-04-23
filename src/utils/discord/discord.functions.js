@@ -1,7 +1,10 @@
-const { utils, config, secret } = globals;
+// const { utils, config, secret } = globals;
 
 const classes = require("./discord.classes");
 const constants = require("./discord.constants");
+
+const http = require("../http");
+const objectDefaults = require("../objectDefaults");
 
 const { Event, Command, CommandOption, Application } = classes;
 const { intents, gatewayOpcodes, gatewayCloseEventCodes, applicationCommandTypes, voiceOpcodes, voiceCloseEventCodes, applicationCommandOptionTypes } = constants;
@@ -23,6 +26,6 @@ module.exports = {
         return parsed.reverse();
     },
     api: (path, options) => {
-        return utils.http(`${config.discord.apiUrl}/v${config.discord.apiVersion}${path}`, utils.objectDefaults(options, { headers: { "Authorization": `Bot ${secret.discord.token}` } }));
+        return http(`${config.discord.apiUrl}/v${config.discord.apiVersion}${path}`, objectDefaults(options, { headers: { "Authorization": `Bot ${secret.discord.token}` } }));
     }
 }

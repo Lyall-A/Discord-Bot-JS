@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const { config } = globals;
+// const { config } = globals;
 
 module.exports = () => {
     fs.readdirSync(config.logPath).forEach(log => {

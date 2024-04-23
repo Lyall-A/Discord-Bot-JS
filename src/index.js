@@ -20,6 +20,8 @@ globals = {
     startDate: new Date(),
 };
 
+Object.entries(globals).forEach(([key, value]) => global[key] = value); // Make globals a real global (bad idea? probably, but whatever)
+
 globals.lang = require(path.resolve(config.langPath, config.lang));
 
 const { utils } = globals;
@@ -30,6 +32,10 @@ require("./utils/getFiles")("./src/utils", i => path.extname(i) == ".js")
         const name = path.basename(filePath, path.extname(filePath));
         globals.utils[name] = require(path.resolve(filePath));
     });
+
+globals.execArgs = utils.parseArgv();
+// Modify config with arguments, if any
+Object.entries(globals.execArgs).forEach(([key, value]) => config[key] = value);
 
 (async () => {
     if (config.debug) {

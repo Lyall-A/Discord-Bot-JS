@@ -1,6 +1,7 @@
-const { utils, lang } = globals;
+// const { utils, lang } = globals;
+const formatString = require("./formatString");
 
 module.exports = (key, obj) => {
     if (!lang[key]) throw new Error(`Lang for '${key}' in not found`);
-    return utils.formatString(lang[key], obj);
+    return formatString(lang[key], obj);
 }

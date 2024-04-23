@@ -1,16 +1,18 @@
 const http = require("http");
 const https = require("https");
 
-const { utils } = globals;
+// const { utils } = globals;
+const objectDefaults = require("./objectDefaults");
+const parseUrl = require("./parseUrl");
 
 module.exports = (url, options) => {
     if (!url) throw new Error("No URL");
-    options = utils.objectDefaults(options, {
+    options = objectDefaults(options, {
         method: "GET"
     });
 
     return new Promise((resolve, reject) => {
-        const parsedUrl = utils.objectDefaults(utils.parseUrl(url), {
+        const parsedUrl = objectDefaults(parseUrl(url), {
             protocol: "http"
         });
         
@@ -28,7 +30,7 @@ module.exports = (url, options) => {
 
         if (options.json) {
             options.body = JSON.stringify(options.json);
-            httpOptions.headers = utils.objectDefaults(httpOptions.headers, { "Content-Type": "application/json" });
+            httpOptions.headers = objectDefaults(httpOptions.headers, { "Content-Type": "application/json" });
         }
 
         const req = (parsedUrl.protocol == "https" ? https : http).request(httpOptions, res => {

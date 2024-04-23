@@ -1,11 +1,16 @@
 // TODO: event deletion on gateway close and stuff like that
 // TODO: delete all these functions?
 
-const { utils, config, secret } = globals;
+// const { utils, config, secret } = globals;
 
 const classes = require("./discord.classes");
 const constants = require("./discord.constants");
 const functions = require("./discord.functions");
+
+const getIdFromToken = require("../getIdFromToken");
+const objectDefaults = require("../objectDefaults");
+const eventListener = require("../eventListener");
+const ws = require("../ws");
 
 const { Event, Command, CommandOption, Application } = classes;
 const { intents, gatewayOpcodes, gatewayCloseEventCodes, applicationCommandTypes, voiceOpcodes, voiceCloseEventCodes, applicationCommandOptionTypes } = constants;
@@ -16,13 +21,13 @@ class Client {
         this.token = token;
         this.intents = intents;
 
-        this.id = utils.getIdFromToken(token);
+        this.id = getIdFromToken(token);
 
         this.listeners = [];
 
-        identity = utils.objectDefaults(identity, {
-            properties: utils.objectDefaults(config.discord.properties, {}),
-            presence: utils.objectDefaults(config.discord.presence, {})
+        identity = objectDefaults(identity, {
+            properties: objectDefaults(config.discord.properties, {}),
+            presence: objectDefaults(config.discord.presence, {})
         });
         this.identity = identity;
         this.intentsInt = (typeof intents == "object" ? parseIntents(intents) : intents) || 0;
@@ -50,7 +55,7 @@ class Client {
 
             // NOTE: this is in a setTimeout so the below READY event is called first
             setTimeout(() => {
-                utils.eventListener.call(eventName, this.listeners, [event, message]);
+                eventListener.call(eventName, this.listeners, [event, message]);
             });
         });
 
@@ -66,7 +71,7 @@ class Client {
         });
     }
 
-    on = (event, callback) => { utils.eventListener.create(event.toUpperCase(), callback, this.listeners) };
+    on = (event, callback) => { eventListener.create(event.toUpperCase(), callback, this.listeners) };
     close = () => { this.gateway.close() };
 
     // TODO: make this, copying djs????????
@@ -124,13 +129,13 @@ class Gateway {
         this.eventListeners = {};
 
         this.beforeConnectTime = Date.now();
-        this.gateway = new utils.ws.connection(`${globals.gatewayUrl}?v=${config.discord.gatewayVersion}&encoding=json`, { json: true });
+        this.gateway = new ws.connection(`${globals.gatewayUrl}?v=${config.discord.gatewayVersion}&encoding=json`, { json: true });
 
         this.gateway.on("open", () => this.connectTime = Date.now() - this.beforeConnectTime);
 
         this.gateway.on("message", message => {
-            if (typeof message.op == "number") utils.eventListener.call(message.op, this.opListeners, [message.d, message]);
-            if (message.t && !message.op) utils.eventListener.call(message.t, this.eventListeners, [message.d, message]);
+            if (typeof message.op == "number") eventListener.call(message.op, this.opListeners, [message.d, message]);
+            if (message.t && !message.op) eventListener.call(message.t, this.eventListeners, [message.d, message]);
         });
 
         this.onOp(10, data => {
@@ -151,8 +156,8 @@ class Gateway {
     }
 
     on = (event, callback) => { this.gateway.on(event, callback) };
-    onOp = (op, callback) => { utils.eventListener.create(op, callback, this.opListeners) };
-    onEvent = (event, callback) => { utils.eventListener.create(event.toUpperCase(), callback, this.eventListeners) };
+    onOp = (op, callback) => { eventListener.create(op, callback, this.opListeners) };
+    onEvent = (event, callback) => { eventListener.create(event.toUpperCase(), callback, this.eventListeners) };
     send = (op, data) => { this.gateway.send({ s: null, op, d: data }) };
     close = () => { this.gateway.close(1000) };
 };

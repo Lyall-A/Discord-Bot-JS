@@ -1,9 +1,10 @@
 const path = require("path");
 
-const { utils, events } = globals;
+// const { utils, events } = globals;
+const getFiles = require("./getFiles");
 
 module.exports = () => {
-    const eventFiles = utils.getFiles("./events", i => path.extname(i) == ".js");
+    const eventFiles = getFiles("./events", i => path.extname(i) == ".js");
     eventFiles.forEach(i => {
         const eventPath = path.resolve(i);
         const Event = require(eventPath);
