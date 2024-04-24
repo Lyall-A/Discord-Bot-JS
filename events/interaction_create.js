@@ -6,8 +6,9 @@ module.exports = class extends utils.Event {
     }
 
     async run(client, interaction) {
-        console.log(interaction)
-        // utils.logger.info("Bot online:"/*, client.user.username*/);
-        utils.logger.info("ah");
+        // console.log(interaction)
+        // TODO: test
+        console.log("responding");
+        interaction.respond().then(i => console.log("I have responded"));
     }
 }

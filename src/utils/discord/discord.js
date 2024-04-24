@@ -51,7 +51,7 @@ class Client {
             // TODO: i wanna make it return my own object instead of just what gateway sends (aka effort)
             const eventName = message.t.toUpperCase();
             // const data = events[eventName] ? new events[eventName](data) : { _raw: rawData };
-            const event = new Event(rawData);
+            const event = new Event(eventName, rawData);
 
             // NOTE: this is in a setTimeout so the below READY event is called first
             setTimeout(() => {

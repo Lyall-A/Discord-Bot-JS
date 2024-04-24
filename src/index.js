@@ -20,9 +20,9 @@ globals = {
     startDate: new Date(),
 };
 
-Object.entries(globals).forEach(([key, value]) => global[key] = value); // Make globals a real global (bad idea? probably, but whatever)
-
 globals.lang = require(path.resolve(config.langPath, config.lang));
+
+Object.entries(globals).forEach(([key, value]) => global[key] = value); // Make globals a real global (bad idea? probably, but whatever)
 
 const { utils } = globals;
 
