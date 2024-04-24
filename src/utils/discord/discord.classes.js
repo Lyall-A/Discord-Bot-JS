@@ -82,6 +82,19 @@ class Guild {
     }
 }
 
+class Error {
+    // https://discord.com/developers/docs/reference#error-messages
+    constructor(req, json) {
+        this._raw = json;
+
+        this.status = req.status;
+        this.statusMessage = req.statusMessage;
+        this.code = json?.code;
+        this.errors = json?.errors;
+        this.message = json?.message;
+    }
+}
+
 module.exports = {
     Event,
     Command,
@@ -89,5 +102,6 @@ module.exports = {
     Application,
     Member,
     User,
-    Guild
+    Guild,
+    Error
 }

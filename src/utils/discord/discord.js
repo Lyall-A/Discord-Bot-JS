@@ -108,9 +108,13 @@ class Client {
     users = {
         get: async (userId) => {
             const req = await api(`/users/${userId || "@me"}`);
-            const user = await req.json().then(user => new User(user));
-            if (!statusCodes["user"].includes(req.status)) throw new Error(); // TODO: make error, make class to "parse" discord error responses?
-            return user;
+            if (statusCodes["user"].includes(req.status)) {
+                const user = await req.json().then(user => new User(user));
+                return user;
+            } else {
+                const json = await req.json().catch(err => { });
+                throw new classes.Error(req, json);
+            }
         }
     }
 
