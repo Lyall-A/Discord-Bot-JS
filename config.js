@@ -1,10 +1,14 @@
 const consoleColors = require("./src/utils/consoleColors");
 
 const config = {
-    debug: true,
+    debug: true, // TODO: does nothing lol
+    eventsPath: "Events",
+    commandsPath: "Commands",
+    guildCommandsPath: "Guild Commands",
+    langPath: "Language",
+    logPath: "Logs",
     secretPath: ".secret",
     lang: "en",
-    langPath: "lang",
     shard: 0,
     discord: {
         gatewayUrl: null/*"wss://gateway.discord.gg"*/, // Set this to null to grab the gateway URL on startup
@@ -28,8 +32,7 @@ const config = {
     timestampFormat: "%{DD}/%{MM}/%{YYYY} %{hh12}:%{mm} %{amPM}",
     logTimestampFormat: `${consoleColors.string(`[%{timestamp}] `, "green")}`,
     logTimestamp: true,
-    logFiles: true,
-    logPath: "logs",
+    logFiles: false,
     logFileName: "%{DD}-%{MM}-%{YY} %{hh}-%{mm}-%{ss} %{ms}.log",
     logFilesDelete: 24 * 60 * 60 * 1000, // Delete logs after x milliseconds. 24 (hours), 60 (minutes), 60 (seconds), 1000 (milliseconds)
     logFilesCheck: 1 * 60 * 60 * 1000, // Check for outdated logs every x milliseconds. 1 (hours), 60 (minutes), 60 (seconds), 1000 (milliseconds)

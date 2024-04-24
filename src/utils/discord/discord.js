@@ -12,8 +12,8 @@ const objectDefaults = require("../objectDefaults");
 const eventListener = require("../eventListener");
 const ws = require("../ws");
 
-const { Event, Command, CommandOption, Application } = classes;
-const { intents, gatewayOpcodes, gatewayCloseEventCodes, applicationCommandTypes, voiceOpcodes, voiceCloseEventCodes, applicationCommandOptionTypes } = constants;
+const { Event, Command, CommandOption, Application, User, Guild } = classes;
+const { intents, statusCodes, gatewayOpcodes, gatewayCloseEventCodes, applicationCommandTypes, voiceOpcodes, voiceCloseEventCodes, applicationCommandOptionTypes } = constants;
 const { parseIntents, parseIntentsInt, api } = functions;
 
 class Client {
@@ -66,7 +66,7 @@ class Client {
 
         this.gateway.on("close", code => {
             if (code == 1000) return;
-            // Reconnect
+            // TODO: Reconnect
             console.log(this.gateway)
         });
     }
@@ -75,17 +75,15 @@ class Client {
     close = () => { this.gateway.close() };
 
     // TODO: make this, copying djs????????
-    application = {
-        get: async () => {
-            return await api("/applications/@me").then(i => i.json()).then(application => new Application(application));
-        },
+    // This is the main stuff
+    // TODO: make these reject if requests arent succesfuls
+    // TODO: stuff like create functions will need a "builder" if u want to use ur own data. if that makes sense
+    applications = {
+        get: (applicationId) => api(`/applications/${applicationId || "@me"}`).then(i => i.json()).then(application => new Application(application)),
         commands: {
             global: {
-                get: async () => {
-                    return await api(`/applications/${this.id}/commands`).then(i => i.json()).then(commands => commands.map(i => new Command(i)));
-                },
-                create: async (command) => {
-                },
+                get: () => api(`/applications/${this.id}/commands`).then(i => i.json()).then(commands => commands.map(i => new Command(i))),
+                create: (command) => api(`/applications/${this.id}/commands`, { method: "POST", json: command }),
                 edit: async () => {
                 },
                 delete: async () => {
@@ -94,9 +92,7 @@ class Client {
                 }
             },
             guild: {
-                get: async (guildId) => {
-                    return await api(`/applications/${this.id}/guilds/${guildId}/commands`).then(i => i.json()).then(commands => commands.map(i => new Command(i)));
-                },
+                get: (guildId) => api(`/applications/${this.id}/guilds/${guildId}/commands`).then(i => i.json()).then(commands => commands.map(command => new Command(command))),
                 create: async (command) => {
                 },
                 edit: async () => {
@@ -110,11 +106,16 @@ class Client {
     }
 
     users = {
-
+        get: async (userId) => {
+            const req = await api(`/users/${userId || "@me"}`);
+            const user = await req.json().then(user => new User(user));
+            if (!statusCodes["user"].includes(req.status)) throw new Error(); // TODO: make error, make class to "parse" discord error responses?
+            return user;
+        }
     }
 
     guilds = {
-
+        get: (guildId) => api(`/guilds/${guildId}`).then(i => i.json()).then(guild => new Guild(guild)),
     }
 
     channels = {

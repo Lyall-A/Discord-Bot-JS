@@ -73,11 +73,21 @@ class User {
     }
 }
 
+class Guild {
+    // https://discord.com/developers/docs/resources/guild#guild-object-guild-structure
+    constructor(rawGuild) {
+        this._raw = rawGuild;
+
+        // TODO
+    }
+}
+
 module.exports = {
     Event,
     Command,
     CommandOption,
     Application,
     Member,
-    User
+    User,
+    Guild
 }

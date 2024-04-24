@@ -4,7 +4,7 @@ const path = require("path");
 const getFiles = require("./getFiles");
 
 module.exports = () => {
-    const eventFiles = getFiles("./events", i => path.extname(i) == ".js");
+    const eventFiles = getFiles(config.eventsPath, i => path.extname(i) == ".js");
     eventFiles.forEach(i => {
         const eventPath = path.resolve(i);
         const Event = require(eventPath);

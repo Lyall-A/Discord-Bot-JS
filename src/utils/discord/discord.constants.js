@@ -74,5 +74,10 @@ module.exports = {
         MENTIONABLE: 9, // Includes users and roles
         NUMBER: 10, // Any double between -2^53 and 2^53
         ATTACHMENT: 11 // attachment object
+    },
+
+    // TODO: idk if i like this?
+    statusCodes: {
+        user: [200] 
     }
 }

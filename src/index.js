@@ -13,6 +13,7 @@ globals = {
     gatewayUrl: config.discord.gatewayUrl,
     shards: config.discord.shards,
     commands: { },
+    globalCommands: { },
     events: { },
     utils: { },
     intervals: { },
@@ -76,10 +77,12 @@ Object.entries(globals.execArgs).forEach(([key, value]) => config[key] = value);
     globals.client = new utils.discord.Client(secret.discord.token, config.discord.intents);
 
     utils.loadEvents(); // Load events
-    utils.loadCommands() // Load commands
+    utils.loadCommands(); // Load commands
+    utils.loadGuildCommands(); // Load Guild Commands
     // TODO: load commands, check registered commands through api and create/delete commands if necessary
     await utils.registerCommands();
 
+    // TODO: make this better
     process.on("SIGINT", async () => {
         utils.logger.closing(utils.lang("closingBot"));
         globals.client.close();

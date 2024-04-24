@@ -55,7 +55,7 @@ module.exports = (url, options) => {
                 json,
                 status: res.statusCode,
                 statusMessage: res.statusMessage,
-                raw: res
+                _raw: res
             });
         });
 
