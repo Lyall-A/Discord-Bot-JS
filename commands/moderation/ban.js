@@ -1,6 +1,3 @@
-// TODO: everything (this is for testing)
-const { utils } = globals;
-
 module.exports = class extends utils.Command {
     constructor() {
         super("ban", "Ban a user", [

@@ -13,7 +13,7 @@ globals = {
     gatewayUrl: config.discord.gatewayUrl,
     shards: config.discord.shards,
     commands: { },
-    globalCommands: { },
+    guildCommands: { },
     events: { },
     utils: { },
     intervals: { },

@@ -9,6 +9,6 @@ module.exports = () => {
         const eventPath = path.resolve(i);
         const Event = require(eventPath);
         const event = new Event();
-        events[event.eventName] = event;
+        events[event.name] = event;
     });
 }

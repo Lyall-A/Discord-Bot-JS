@@ -95,6 +95,30 @@ class Error {
     }
 }
 
+class CommandBuilder {
+    constructor(command) {
+        // TODO: finish
+        this.name = command.name;
+        this.description = command.description;
+        if (command.type) this.type = command.type;
+        if (command.nsfw) this.nsfw = command.nsfw;
+        this.options = [];
+        if (command.options) command.options.forEach((option, index) => {
+            if (option?.constructor != CommandOptionBuilder)
+                this.options.push(new CommandOptionBuilder(option));
+            else
+                this.options.push(option);
+        });
+    }
+}
+
+class CommandOptionBuilder {
+    constructor(option) {
+        // TODO: make thissss, also convert type to number if string (from constants)
+        this.name = option.name;
+    }
+}
+
 module.exports = {
     Event,
     Command,
@@ -103,5 +127,7 @@ module.exports = {
     Member,
     User,
     Guild,
-    Error
+    Error,
+    CommandBuilder,
+    CommandOptionBuilder
 }

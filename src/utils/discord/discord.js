@@ -81,17 +81,15 @@ class Client {
     applications = {
         get: (applicationId) => api(`/applications/${applicationId || "@me"}`).then(i => i.json()).then(application => new Application(application)),
         commands: {
-            global: {
-                get: () => api(`/applications/${this.id}/commands`).then(i => i.json()).then(commands => commands.map(i => new Command(i))),
-                create: (command) => api(`/applications/${this.id}/commands`, { method: "POST", json: command }),
-                edit: async () => {
-                },
-                delete: async () => {
-                },
-                bulkOverwrite: async () => {
-                }
+            get: () => api(`/applications/${this.id}/commands`).then(i => i.json()).then(commands => commands.map(i => new Command(i))),
+            create: (command) => api(`/applications/${this.id}/commands`, { method: "POST", json: command }),
+            edit: async () => {
             },
-            guild: {
+            delete: async () => {
+            },
+            bulkOverwrite: async () => {
+            },
+            guilds: {
                 get: (guildId) => api(`/applications/${this.id}/guilds/${guildId}/commands`).then(i => i.json()).then(commands => commands.map(command => new Command(command))),
                 create: async (command) => {
                 },
@@ -124,6 +122,10 @@ class Client {
 
     channels = {
 
+    }
+
+    interactions = {
+        respond: (interactionId, interactionToken, data) => api(`/interactions/${interactionId}/${interactionToken}`, { method: "POST", json: data }),
     }
 };
 

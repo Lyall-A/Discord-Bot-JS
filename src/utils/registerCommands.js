@@ -4,26 +4,6 @@
 // const { utils, commands, secret } = globals;
 
 module.exports = async () => {
-    // const cmds = Object.values(commands).map(i => ({
-    //     name: i.commandName,
-    //     description: i.commandDescription,
-    //     options: i.commandOptions,
-    //     ...i.additionalFields
-    // }));
-
-    // const globalCommands = await globals.client.application.commands.global.get();
-    // console.log(globalCommands[1]);
-
-    // utils.discord.api(`/applications/${utils.getIdFromToken(secret.discord.token)}/commands`, {
-    //     method: "PUT",
-    //     json: cmds
-    // }).then(i => i.json()).then(i => console.log(i));
-
-    // utils.discord.api(`/applications/${utils.getIdFromToken(secret.discord.token)}/commands`, {
-    //     // method: "PUT",
-    //     // json: cmds
-    // }).then(i => i.json()).then(i => console.log(i.map(i => ({ name: i.name, description: i.description }))));
-
-    // const gl = await utils.discord.getGlobalCommands(utils.getIdFromToken(secret.discord.token));
-    // console.log(gl)
+    // Something like this :D
+    // client.application.bulkOverwrite(commands.map(i => new utils.discord.CommandBuilder(i)));
 }

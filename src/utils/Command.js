@@ -1,8 +1,8 @@
 module.exports = class {
     constructor(name, description, options, additionalFields) {
-        this.commandName = name;
-        this.commandDescription = description;
-        this.commandOptions = options || [ ];
-        this.commandAdditionalFields = additionalFields || { };
+        this.name = name;
+        this.description = description;
+        this.options = options || [ ];
+        this.additionalFields = additionalFields || { };
     }
 }

@@ -1,9 +1,9 @@
 module.exports = class extends utils.Command {
     constructor() {
-        super("ping", "Test response times");
+        super("uptime", "Get bot uptime");
     }
 
     async run() {
-        console.log("/ping")
+        console.log("/uptime")
     }
 }

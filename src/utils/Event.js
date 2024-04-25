@@ -1,6 +1,6 @@
 module.exports = class {
-    constructor(eventName) {
-        this.eventName = eventName;
-        globals.client.on(eventName, data => this.run(globals.client, data));
+    constructor(name) {
+        this.name = name;
+        globals.client.on(name, data => this.run(globals.client, data));
     }
 }
