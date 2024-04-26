@@ -3,20 +3,14 @@ node_modules
 *.log
 *.
 
-# unnecessary but im stupid
 Thumbs.db
 [Dd]esktop.ini
 $RECYCLE.BIN/
-# i dont even own a mac
+
 .DS_Store
 .fseventsd
 .Spotlight-V100
 .TemporaryItems
 .Trashes
 
-# im stupid
-#*
-#!*.js
-#!*.json
-#!*.code-workspace
-#!*.md
+.vscode

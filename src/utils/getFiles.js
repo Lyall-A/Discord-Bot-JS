@@ -9,7 +9,7 @@ function getFiles(dirPath, fileFilter, dirFilter, depth, currDepth = 0) {
         .forEach(fileName => {
             const joinedPath = path.join(dirPath, fileName);
             if (fs.lstatSync(joinedPath).isDirectory()) {
-                if ((depth && currDepth < depth) || !depth)
+                if ((typeof depth == "number" && currDepth < depth) || typeof depth != "number")
                     files.push(...getFiles(joinedPath, fileFilter, dirFilter, depth, currDepth+1));
             } else {
                 if (typeof fileFilter == "function" ? fileFilter(joinedPath) : true) files.push(joinedPath);
